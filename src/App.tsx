@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
@@ -19,6 +19,7 @@ import { UserSelector } from './components/UserSelector';
 import { Comment } from './types/Comment';
 import { Post } from './types/Post';
 import { User } from './types/User';
+import { useEffect } from 'react';
 
 export const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -38,26 +39,8 @@ export const App: React.FC = () => {
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
   const [commentActionError, setCommentActionError] = useState('');
 
-  const selectorRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     getUsers().then(setUsers);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-
-      if (selectorRef.current && !selectorRef.current.contains(target)) {
-        setIsSelectorOpen(false);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
   }, []);
 
   const resetPostState = () => {
@@ -133,7 +116,6 @@ export const App: React.FC = () => {
       setComments(currentComments => [...currentComments, newComment]);
     } catch {
       setCommentActionError('Unable to add a comment');
-      throw new Error('Unable to add a comment');
     }
   };
 
@@ -168,7 +150,11 @@ export const App: React.FC = () => {
         <div className="tile is-ancestor">
           <div className="tile is-parent">
             <div className="tile is-child box is-success">
-              <div className="block" ref={selectorRef}>
+              <div
+                className="block"
+                onBlur={() => setIsSelectorOpen(false)}
+                tabIndex={0}
+              >
                 <UserSelector
                   users={users}
                   selectedUser={selectedUser}

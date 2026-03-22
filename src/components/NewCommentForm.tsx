@@ -58,6 +58,8 @@ export const NewCommentForm: React.FC<Props> = ({ onSubmit, submitError }) => {
 
       setBody('');
       setErrors(initialErrors);
+    } catch {
+      // error is handled in App.tsx
     } finally {
       setIsSubmitting(false);
     }
